@@ -1,5 +1,146 @@
 # 1️⃣🐝🏎️ The One Billion Row Challenge
 
+## My Solution
+
+The goal of this implementation is to be **reasonably fast**, while keeping it **easy to read**. 
+It should not contain anything that cannot be found in a "typical enterprise batch", such as:
+
+* sophisticated algorithmic operations, such as custom data structures, and optimized bitmasks,
+* features from Java 9 and newer, and
+* "advanced" features like sun.misc.Unsafe.
+
+Fun fact: The resulting implementation has 2^8 lines of code, which is considered an additional bonus. :sunglasses:
+
+## Results
+
+The implementation is almost 50 times faster than the baseline implementation.
+Which brings down the time for processing 12 GB data from about 3.5 minutes to 3.5 seconds.
+
+```text
+$ hyperfine -i -r 3 ./calculate_average_baseline.sh ./calculate_average_gschauer.sh
+Benchmark 1: ./calculate_average_baseline.sh
+  Time (mean ± σ):     201.027 s ±  0.239 s    [User: 197.705 s, System: 4.115 s]
+  Range (min … max):   200.756 s … 201.211 s    3 runs
+
+Benchmark 2: ./calculate_average_gschauer.sh
+  Time (mean ± σ):      3.501 s ±  0.045 s    [User: 29.330 s, System: 1.312 s]
+  Range (min … max):    3.464 s …  3.551 s    3 runs
+
+Summary
+  ./calculate_average_gschauer.sh ran
+   57.41 ± 0.74 times faster than ./calculate_average_baseline.sh
+```
+
+## Comparison to Others
+
+My solution (*gschauer*) was compared to the top 50, who entered the official competition.
+They were executed on a MacBook Pro with M1 Pro (10-Core CPU) and 32 GB memory.
+In order to have the same conditions, Java 21.0.2-ms was used.
+Unfortunately, this Java version does not support some incubating Vector API feature, which is used by some solutions.
+
+Here some facts from the analysis:
+
+* my implementation is in the top 40, with the fastest implementation being about 2.5x faster,
+* it is among the fastest implementations, which do not use `sun.misc.Unsafe`,
+* the shortest solutions and (subjectively) best readable solution was provided by
+  [alesj](src/main/java/dev/morling/onebrc/CalculateAverage_alesj.java), with a whopping 28 lines of code, and
+* my solution is among the top 30 smallest solutions (less than 150 lines of code), yet it is more than 2x faster than any of them.
+
+## Statistics
+
+Here are the results of running the top 50 solutions on the mentioned hardware.
+Hence, the results are slightly different from the official competition with the Hetzner AX161 server.
+
+```text
+Summary
+./calculate_average_artsiomkorzun.sh ran
+1.06 ± 0.03 times faster than ./calculate_average_thomaswue.sh
+1.19 ± 0.05 times faster than ./calculate_average_abeobk.sh
+1.24 ± 0.03 times faster than ./calculate_average_serkan-ozal.sh
+1.26 ± 0.04 times faster than ./calculate_average_stephenvonworley.sh
+1.28 ± 0.03 times faster than ./calculate_average_merykittyunsafe.sh
+1.29 ± 0.04 times faster than ./calculate_average_jerrinot.sh
+1.39 ± 0.04 times faster than ./calculate_average_gonixunsafe.sh
+1.42 ± 0.04 times faster than ./calculate_average_tivrfoa.sh
+1.46 ± 0.04 times faster than ./calculate_average_mtopolnik.sh
+1.47 ± 0.04 times faster than ./calculate_average_armandino.sh
+1.50 ± 0.05 times faster than ./calculate_average_gonix.sh
+1.54 ± 0.05 times faster than ./calculate_average_yavuztas.sh
+1.56 ± 0.04 times faster than ./calculate_average_JamalMulla.sh
+1.59 ± 0.08 times faster than ./calculate_average_merykitty.sh
+1.69 ± 0.05 times faster than ./calculate_average_iziamos.sh
+1.74 ± 0.05 times faster than ./calculate_average_JesseVanRooy.sh
+1.75 ± 0.10 times faster than ./calculate_average_vemanaNonIdiomatic.sh
+1.75 ± 0.05 times faster than ./calculate_average_royvanrijn.sh
+1.76 ± 0.15 times faster than ./calculate_average_ebarlas.sh
+1.81 ± 0.06 times faster than ./calculate_average_zerninv.sh
+1.87 ± 0.05 times faster than ./calculate_average_yourwass.sh
+1.94 ± 0.05 times faster than ./calculate_average_gigiblender.sh
+1.94 ± 0.06 times faster than ./calculate_average_vaidhy.sh
+1.96 ± 0.06 times faster than ./calculate_average_shipilev.sh
+1.97 ± 0.05 times faster than ./calculate_average_obourgain.sh
+2.04 ± 0.07 times faster than ./calculate_average_jonathan-aotearoa.sh
+2.07 ± 0.06 times faster than ./calculate_average_vemana.sh
+2.07 ± 0.08 times faster than ./calculate_average_JaimePolidura.sh
+2.13 ± 0.06 times faster than ./calculate_average_EduardoSaverin.sh
+2.14 ± 0.07 times faster than ./calculate_average_hundredwatt.sh
+2.19 ± 0.15 times faster than ./calculate_average_plevart.sh
+2.22 ± 0.10 times faster than ./calculate_average_ianopolousfast.sh
+2.30 ± 0.06 times faster than ./calculate_average_charlibot.sh
+2.33 ± 0.53 times faster than ./calculate_average_arjenw.sh
+2.42 ± 0.10 times faster than ./calculate_average_cliffclick.sh
+2.49 ± 0.08 times faster than ./calculate_average_jparera.sh
+2.53 ± 0.18 times faster than ./calculate_average_isolgpus.sh
+2.54 ± 0.07 times faster than ./calculate_average_gschauer.sh <----------
+2.55 ± 0.13 times faster than ./calculate_average_melgenek.sh
+2.66 ± 0.09 times faster than ./calculate_average_flippingbits.sh
+2.76 ± 0.08 times faster than ./calculate_average_PanagiotisDrakatos.sh
+3.00 ± 0.08 times faster than ./calculate_average_roman-r-m.sh
+3.10 ± 0.12 times faster than ./calculate_average_spullara.sh
+3.25 ± 0.53 times faster than ./calculate_average_gamlerhart.sh
+```
+
+## CPU Efficiency
+
+When running those implementations, I discovered four, which are not CPU-bound.
+All others utilize about 10-30 seconds of CPU time, whereas those four needed about 0.01 seconds of CPU time.
+Here is a comparison of those four in relation to the overall fastest one.
+Note the `[User: 0.001 s, System: 0.002 s]`:
+
+```text
+Benchmark 1: ./calculate_average_thomaswue.sh                                                                                                                                                
+  Time (mean ± σ):      1.364 s ±  0.019 s    [User: 10.470 s, System: 1.149 s]                                                                                                              
+  Range (min … max):    1.347 s …  1.396 s    5 runs                                          
+                                                                                                                                                                                             
+Benchmark 4: ./calculate_average_serkan-ozal.sh                                                                                                                                              
+  Time (mean ± σ):      1.602 s ±  0.016 s    [User: 0.003 s, System: 0.005 s]                                                                                                               
+  Range (min … max):    1.583 s …  1.619 s    5 runs                                                                                                                                         
+                                                                                                                                                                                             
+Benchmark 11: ./calculate_average_gonixunsafe.sh                                                                                                                                             
+  Time (mean ± σ):      1.786 s ±  0.027 s    [User: 0.001 s, System: 0.002 s]                                                                                                               
+  Range (min … max):    1.752 s …  1.820 s    5 runs                                                                                                                                         
+                                                                                                                                                                                             
+Benchmark 12: ./calculate_average_yourwass.sh                                                                                                                                                
+  Time (mean ± σ):      2.405 s ±  0.023 s    [User: 0.002 s, System: 0.004 s]                                                                                                               
+  Range (min … max):    2.377 s …  2.437 s    5 runs                                                                                                                                         
+                                                                               
+Benchmark 14: ./calculate_average_gonix.sh                                                    
+  Time (mean ± σ):      1.936 s ±  0.030 s    [User: 0.001 s, System: 0.002 s]
+  Range (min … max):    1.897 s …  1.979 s    5 runs
+
+...
+
+Summary                                                                                                                                                                                      
+  ./calculate_average_artsiomkorzun.sh ran                                                                                                                                                   
+    1.06 ± 0.03 times faster than ./calculate_average_thomaswue.sh                                                                                                                           
+    1.24 ± 0.03 times faster than ./calculate_average_serkan-ozal.sh                          
+    1.39 ± 0.04 times faster than ./calculate_average_gonixunsafe.sh                                                                                                                         
+    1.50 ± 0.05 times faster than ./calculate_average_gonix.sh                                                                                                                               
+    1.87 ± 0.05 times faster than ./calculate_average_yourwass.sh     
+```
+
+## Original Readme
+
 _Status Feb 4: The final leaderboards [have been published](https://www.morling.dev/blog/1brc-results-are-in/). Congrats to all the winners, and a big thank you to everyone participating in this challenge as well as to everyone helping to organize it!_
 
 _Status Feb 3: All entries have been evaluated and I am in the process of finalizing the leaderboards._
